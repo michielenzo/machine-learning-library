@@ -2,8 +2,8 @@
 {
     public interface IModel
     {
-        void Fit(float independent, float dependent);
+        void Fit(double independent, double dependent);
         
-        double Predict(float dependent);
+        double Predict(double dependent);
     }
 }    

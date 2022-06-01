@@ -2,8 +2,8 @@
 {
     public class Axon
     {
-        public Neuron owner;
-        public Neuron receiver;
-        public float weight;
+        public Neuron Owner;
+        public Neuron Receiver;
+        public double Weight;
     }
 }

@@ -6,19 +6,18 @@ namespace Machine_Learning_Library.DeepLearning.NeuralNetwork
 {
     public class Neuron
     {
-        public float bias = 0.5f;
+        public double bias;
 
-        public float activation = 0;
+        public double Activation = 0;
 
-        /*
-        public List<Axon> axons;
+        public readonly List<Axon> Axons = new List<Axon>();
 
-        public List<Axon> synapses;
-        */
+        public readonly List<Axon> Synapses = new List<Axon>();
 
-        public readonly Dictionary<Neuron, float> axis = new Dictionary<Neuron, float>();
-
-        public readonly Dictionary<Neuron, float> Synapses = new Dictionary<Neuron, float>();
-
+        public Neuron(double bias)
+        {
+            this.bias = bias;
+        }
+        
     }
 }

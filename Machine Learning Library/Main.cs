@@ -7,16 +7,24 @@ namespace Machine_Learning_Library
     {
         public static void Main()
         {
-            Random random = new Random();
-            Console.WriteLine(random.NextDouble());
-            Console.WriteLine(random.NextDouble());
-            Console.WriteLine(random.NextDouble());
-            Console.WriteLine(random.NextDouble());
-            Console.WriteLine(random.NextDouble());
-            Console.WriteLine(random.NextDouble());
-            /*int[] arr = {3,3,3};
-            NeuralNetwork neuralNetwork = new NeuralNetwork(arr);
-            neuralNetwork.RunEpoch();*/
+
+            /*Random random = new Random();
+
+            Console.WriteLine((random.NextDouble() * 100000) % 5);*/
+
+            /*for (int i = 10 - 1; i >= 0; i--)
+            {
+                Console.WriteLine(i);
+            }*/
+
+            int[] arr = {3,3,3,3,3};
+            string[] outputLabels = {"a","b","c"};
+            NeuralNetwork neuralNetwork = new NeuralNetwork(arr, outputLabels);
+            
+            double[] inputActivations = { 4, 0.1, 3 };
+            neuralNetwork.RunEpoch(inputActivations);
+            
+            Console.WriteLine(Sigmoid(2));
         }
         
         public static float Sigmoid(double value) {

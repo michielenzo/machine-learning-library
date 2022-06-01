@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 
 namespace Machine_Learning_Library.DeepLearning.NeuralNetwork
 {
@@ -10,78 +8,116 @@ namespace Machine_Learning_Library.DeepLearning.NeuralNetwork
         
         private readonly List<List<Neuron>> _layers = new List<List<Neuron>>();
         
-        private Random _random = new Random();
+        private readonly Random _random = new Random();
 
-        public NeuralNetwork(int[] layerSpecification) 
+        public NeuralNetwork(int[] layerSpecification, string[] outPutLabels)
         {
-            CreateNeurons(layerSpecification);
+            CreateNeurons(layerSpecification, outPutLabels);
             CreateAxons();
         }
 
-        public void RunEpoch()
+        public void Train(double[] inputActivations, string label)
         {
-            foreach (List<Neuron> layer in _layers)
+            RunEpoch(inputActivations);
+            double cost = CalculateCost(label);
+        }
+
+        private double CalculateCost(string label)
+        {
+            List<Neuron> outputLayer = _layers.Last();
+            List<double> costs = new List<double>();
+            
+            foreach (Neuron neuron in outputLayer)
             {
-                foreach (Neuron neuron in layer)
-                {
-                    neuron.activation = CalculateActivation(neuron);
-                }                
+                double wantedActivation = 0;
+                if (((OutputNeuron) neuron).label == label) wantedActivation = 1;
+                
+                costs.Add(Math.Pow(neuron.Activation - wantedActivation, 2));
+            }
+
+            return costs.Sum();
+        }
+
+
+        public void RunEpoch(double[] inputActivations)
+        {
+            for (int i = 0; i < inputActivations.Length; i++)
+            {
+                _layers[0][i].Activation = inputActivations[i];
+            }
+            
+            List<List<Neuron>> allLayersExceptTheFirst = _layers.GetRange(1, _layers.Count - 1);
+            
+            foreach (var neuron in allLayersExceptTheFirst.SelectMany(layer => layer))
+            {
+                neuron.Activation = CalculateActivation(neuron);
             }
         }
 
-        private float CalculateActivation(Neuron neuron)
+        private double CalculateActivation(Neuron neuron)
         {
-            float weightedSum = neuron.Synapses.Sum(synapse => synapse.Key.activation * synapse.Value);
-            return ReLU(weightedSum + neuron.bias);
+            double weightedSum = neuron.Synapses.Sum(synapse => synapse.Weight * synapse.Owner.Activation);
+            return ReLu(weightedSum + neuron.bias);
         }
         
-        private static float ReLU(double val)
+        /*
+         * ReLu is an activation function alternative for the sigmoid function. The sigmoid activation function is
+         * representative of the working of biological neural networks.
+         */
+        private static double ReLu(double val)
         {
-            return (float) Math.Max(0, val);
+            return Math.Max(0, val);
         }
 
-        private void Create(int[] layerSpecification)
+        private void CreateNeurons(int[] layerSpecification, string[] outPutLabels)
         {
             
-        }
-
-        private void CreateNeurons(int[] layerSpecification)
-        {
-            foreach (int nNeurons in layerSpecification)
+            foreach (int nNeurons in layerSpecification[.. ^1])
             {
                 List<Neuron> layer = new List<Neuron>();
-
-                for (int j = 0; j < nNeurons; j++)
-                {
-                    layer.Add(new Neuron());
-                }
-
+                
+                for (int j = 0; j < nNeurons; j++) layer.Add(new Neuron( -_random.NextDouble()));
+                
                 _layers.Add(layer);
             }
+            
+            List<Neuron> outPutLayer = new List<Neuron>();
+            for (int j = 0; j < layerSpecification[^1]; j++)
+            {
+                outPutLayer.Add(new OutputNeuron(_random.NextDouble(), outPutLabels[j]));
+            }
+            
+            _layers.Add(outPutLayer);
         }
 
         private void CreateAxons()
         {
-            for (int i = 0; i < _layers.Count; i++) 
+            // For every layer except the last one.
+            for(int i = 0; i < _layers.Count - 1; i++)
             {
-                foreach (Neuron neuron in _layers[i])
+                List <Neuron> layer = _layers[i];
+                
+                // For each neuron in layer i
+                foreach (var neuron in layer)
                 {
-                    if (i < _layers.Count - 1)
+                    // For each neuron in the next layer
+                    for (int k = 0; k < _layers[i + 1].Count; k++)
                     {
-                        foreach (Neuron neuronInNextLayer in _layers[i+1]) 
-                        {
-                            neuron.axis.Add(neuronInNextLayer , 0);
-                        }                        
-                    }
+                        List<Neuron> nextLayer = _layers[i + 1];
+                        Neuron neuronInNextLayer = nextLayer[k];
+                        
+                        Axon axon = new Axon {
+                            Owner = neuron, 
+                            Receiver = neuronInNextLayer, 
+                            Weight = (float) _random.NextDouble()
+                        };
 
-                    if (i < 1) continue;
-                    
-                    foreach (Neuron neuronInPrevioustLayer in _layers[i-1]) 
-                    {
-                        neuron.Synapses.Add(neuronInPrevioustLayer , 0);
+                        neuron.Axons.Add(axon);
+                        neuronInNextLayer.Synapses.Add(axon);
                     }
                 }
             }
         }
+        
     }
 }
