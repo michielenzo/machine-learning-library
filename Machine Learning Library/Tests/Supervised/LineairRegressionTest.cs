@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using Machine_Learning_Library.Supervised;
 
 namespace Machine_Learning_Library.tests
 {
@@ -50,13 +51,13 @@ namespace Machine_Learning_Library.tests
         public void TestPositiveRelationWithGradientDescent()
         {
             _positiveRelationModel.InterceptStrategy = LineairRegression.InterceptStrategies.GradientDescent;
-            _positiveRelationModel.Logging = true;
+            _positiveRelationModel.GradDesc.Logging = true;
             
-            _positiveRelationModel.LearningRate = 0.01;
-            _positiveRelationModel.MaxSteps = 200;
-            _positiveRelationModel.MinStepSize = 0.01;
-            _positiveRelationModel.MaxStepSize = 0.25;
-            _positiveRelationModel.initialGuess = 7;
+            _positiveRelationModel.GradDesc.LearningRate = 0.01;
+            _positiveRelationModel.GradDesc.MaxSteps = 200;
+            _positiveRelationModel.GradDesc.MinStepSize = 0.01;
+            _positiveRelationModel.GradDesc.MaxStepSize = 0.25;
+            _positiveRelationModel.GradDesc.InitialGuess = 7;
             
             Console.WriteLine(_positiveRelationModel.FunctionAsString());
         }
@@ -65,13 +66,13 @@ namespace Machine_Learning_Library.tests
         public void TestNegativeRelationWithGradientDescent()
         {
             _negativeRelationModel.InterceptStrategy = LineairRegression.InterceptStrategies.GradientDescent;
-            _negativeRelationModel.Logging = true;
+            _negativeRelationModel.GradDesc.Logging = true;
 
-            _negativeRelationModel.LearningRate = 0.01;
-            _negativeRelationModel.MaxSteps = 50;
-            _negativeRelationModel.MinStepSize = 0.01;
-            _negativeRelationModel.MaxStepSize = 0.25;
-            _negativeRelationModel.initialGuess = 8;
+            _negativeRelationModel.GradDesc.LearningRate = 0.01;
+            _negativeRelationModel.GradDesc.MaxSteps = 50;
+            _negativeRelationModel.GradDesc.MinStepSize = 0.01;
+            _negativeRelationModel.GradDesc.MaxStepSize = 0.25;
+            _negativeRelationModel.GradDesc.InitialGuess = 8;
             
             Console.WriteLine(_negativeRelationModel.FunctionAsString());
         }
